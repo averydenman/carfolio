@@ -14,7 +14,13 @@ const db = new pg.Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// Create the vehicles table if it doesn't exist
+// Helper to safely parse numbers
+function safeParseFloat(val) {
+  const parsed = parseFloat(val);
+  return isNaN(parsed) ? 0 : parsed;
+}
+
+// Create vehicles table if not exists
 db.query(`
   CREATE TABLE IF NOT EXISTS vehicles (
     id SERIAL PRIMARY KEY,
@@ -37,7 +43,7 @@ app.get('/vehicles', async (req, res) => {
   res.json(result.rows);
 });
 
-// Add a new vehicle
+// Add vehicle
 app.post('/vehicles', async (req, res) => {
   const { vin, make, model, year, startingCost, transportationCost, partsCost, repairsCost, listPrice, mileage } = req.body;
   await db.query(
@@ -48,18 +54,18 @@ app.post('/vehicles', async (req, res) => {
       make,
       model,
       year,
-      parseFloat(startingCost),
-      parseFloat(transportationCost),
-      parseFloat(partsCost),
-      parseFloat(repairsCost),
-      parseFloat(listPrice),
+      safeParseFloat(startingCost),
+      safeParseFloat(transportationCost),
+      safeParseFloat(partsCost),
+      safeParseFloat(repairsCost),
+      safeParseFloat(listPrice),
       mileage
     ]
   );
   res.sendStatus(201);
 });
 
-// Update a vehicle
+// Update vehicle
 app.put('/vehicles/:id', async (req, res) => {
   const { id } = req.params;
   const { vin, make, model, year, startingCost, transportationCost, partsCost, repairsCost, listPrice, mileage } = req.body;
@@ -71,11 +77,11 @@ app.put('/vehicles/:id', async (req, res) => {
       make,
       model,
       year,
-      parseFloat(startingCost),
-      parseFloat(transportationCost),
-      parseFloat(partsCost),
-      parseFloat(repairsCost),
-      parseFloat(listPrice),
+      safeParseFloat(startingCost),
+      safeParseFloat(transportationCost),
+      safeParseFloat(partsCost),
+      safeParseFloat(repairsCost),
+      safeParseFloat(listPrice),
       mileage,
       id
     ]
@@ -83,12 +89,13 @@ app.put('/vehicles/:id', async (req, res) => {
   res.sendStatus(200);
 });
 
-// Delete a vehicle
+// Delete vehicle
 app.delete('/vehicles/:id', async (req, res) => {
   const { id } = req.params;
   await db.query('DELETE FROM vehicles WHERE id=$1', [id]);
   res.sendStatus(200);
 });
 
+// Correct port binding for Railway
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
