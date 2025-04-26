@@ -90,5 +90,5 @@ app.delete('/vehicles/:id', async (req, res) => {
   res.sendStatus(200);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
