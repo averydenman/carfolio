@@ -43,7 +43,18 @@ app.post('/vehicles', async (req, res) => {
   await db.query(
     `INSERT INTO vehicles (vin, make, model, year, startingCost, transportationCost, partsCost, repairsCost, listPrice, mileage)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-    [vin, make, model, year, startingCost, transportationCost, partsCost, repairsCost, listPrice, mileage]
+    [
+      vin,
+      make,
+      model,
+      year,
+      parseFloat(startingCost),
+      parseFloat(transportationCost),
+      parseFloat(partsCost),
+      parseFloat(repairsCost),
+      parseFloat(listPrice),
+      mileage
+    ]
   );
   res.sendStatus(201);
 });
@@ -55,7 +66,19 @@ app.put('/vehicles/:id', async (req, res) => {
   await db.query(
     `UPDATE vehicles SET vin=$1, make=$2, model=$3, year=$4, startingCost=$5,
      transportationCost=$6, partsCost=$7, repairsCost=$8, listPrice=$9, mileage=$10 WHERE id=$11`,
-    [vin, make, model, year, startingCost, transportationCost, partsCost, repairsCost, listPrice, mileage, id]
+    [
+      vin,
+      make,
+      model,
+      year,
+      parseFloat(startingCost),
+      parseFloat(transportationCost),
+      parseFloat(partsCost),
+      parseFloat(repairsCost),
+      parseFloat(listPrice),
+      mileage,
+      id
+    ]
   );
   res.sendStatus(200);
 });
